@@ -1,6 +1,6 @@
 # App folders
-downloads/
-output/
+download/!*.gitkeep
+output/!*.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
