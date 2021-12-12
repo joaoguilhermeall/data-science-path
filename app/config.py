@@ -26,8 +26,6 @@ class _BaseConfig(ABC):
     KAGGLE_DATASET = "uciml/pima-indians-diabetes-database"
     KAGGLE_DATASET_FILENAME = "diabetes.csv"
 
-    KAGGLE_DATASET_FILE = DOWNLOAD / KAGGLE_DATASET_FILENAME
-
 
 class BaseConfig(_BaseConfig):
     pass
@@ -58,7 +56,7 @@ class ConfigKaggle(_BaseConfig):
 
         if (
             self.REQUEST_KAGGLE
-            and not path.exists(self.KAGGLE_DATASET_FILE)
+            and not path.exists(self.DOWNLOAD / self.KAGGLE_DATASET_FILENAME)
             or self.REQUEST_KAGGLE_FORCE
         ):
             # Request KAGGLE credentials
