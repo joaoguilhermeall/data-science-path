@@ -1,4 +1,5 @@
-from typing import Any, Union
+from pathlib import Path
+from typing import Any, Dict, List, Union
 
 import os
 from abc import ABC
@@ -19,7 +20,7 @@ class ETL(ABC):
     def __init__(self, configs: BaseConfig) -> None:
         super().__init__()
         self._configs = configs
-        self._dataframe = None
+        self._dataframes: Dict[str, DataFrame] = {}
 
     def __getitem__(self, name: str) -> Any:
         if name == "extract":
@@ -33,32 +34,38 @@ class ETL(ABC):
         else:
             raise (ActionETLException(f"Action for ETL is not valid: {name}"))
 
+    def _download_dataset(self, dataset: str, file_name: str) -> Path:
+        """Download dataset file from Kaggle"""
+        # Import from method because KaggleApi is instantiated when It is called
+        from kaggle.api.kaggle_api_extended import KaggleApi, ApiException
+
+        kaggle_api = KaggleApi()
+        kaggle_api.authenticate()
+
+        try:
+            kaggle_api.dataset_download_file(
+                dataset=dataset,
+                file_name=file_name,
+                path=self._configs.DOWNLOAD,
+                force=True,
+                quiet=False
+            )
+        except ApiException(401) as ex:
+            raise (
+                KaggleException(f"{ex}: Please, try a new Kaggle API Token. Manages it on the kaggle website")
+            )
+        
+        return self._configs.DOWNLOAD / file_name
+
     def extract(self) -> None:
-        """Download dataset file"""
-        if (
-            not os.path.exists(self._configs.KAGGLE_DATASET_FILE)
+        """Extract and build information"""
+        if (not os.path.exists(self._configs.DOWNLOAD / self._configs.KAGGLE_DATASET_FILENAME)
             or self._configs.REQUEST_KAGGLE_FORCE
         ):
+            file_path = self._download_dataset()
+            file_key = file_path.name.rsplit(".")[0]
 
-            from kaggle.api.kaggle_api_extended import KaggleApi, ApiException
-
-            kaggle_api = KaggleApi()
-            kaggle_api.authenticate()
-
-            try:
-                kaggle_api.dataset_download_file(
-                    self._configs.KAGGLE_DATASET,
-                    self._configs.KAGGLE_DATASET_FILENAME,
-                    path=self._configs.DOWNLOAD,
-                    force=self._configs.REQUEST_KAGGLE_FORCE,
-                    quiet=False
-                )
-            except ApiException(401) as ex:
-                raise (
-                    KaggleException(f"{ex}: Please, try a new Kaggle API Token. Manages it on the kaggle website")
-                )
-            
-        self._dataframe = read_csv(self._configs.KAGGLE_DATASET_FILE)
+            self._dataframes[file_key] = read_csv(file_path)
 
     def transform(self):
         pass
@@ -73,4 +80,4 @@ class ETL(ABC):
         self.loading()
 
     def dataframe(self) -> Union[DataFrame, None]:
-        return self._dataframe
+        return self._dataframes
