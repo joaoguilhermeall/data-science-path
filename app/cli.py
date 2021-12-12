@@ -1,7 +1,7 @@
 import argparse
 
 
-def cli_constructor() -> None:
+def cli_constructor() -> argparse.Namespace:
 
     parser = argparse.ArgumentParser(
         prog="Data Science Path - CLI",
@@ -10,7 +10,6 @@ def cli_constructor() -> None:
 
     parser.add_argument(
         "action",
-        required=True,
         choices=["extract", "transform", "load", "pipeline"],
         help="Level of Application",
     )
@@ -19,18 +18,18 @@ def cli_constructor() -> None:
         "--verbose",
         help="Be verbose",
         action="store_true",
-        type=bool,
         default=False,
     )
     parser.add_argument(
         "--kaggle",
         help="Require Username and API Key of Kaggle from prompt",
-        type=bool,
         action="store_true",
         default=False,
     )
 
     args = parser.parse_args()
+
+    return args
 
 
 if __name__ == "__main__":

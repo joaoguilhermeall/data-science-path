@@ -1,5 +1,4 @@
 from typing import Any
-import kaggle
 
 from abc import ABC
 
@@ -18,7 +17,7 @@ class ETL(ABC):
         super().__init__()
         self._configs = configs
 
-    def __getattribute__(self, name: str) -> Any:
+    def __getitem__(self, name: str) -> Any:
         if name == "extract":
             return self.extract
         elif name == "transform":
@@ -32,7 +31,9 @@ class ETL(ABC):
 
     def extract(self):
         # TODO: Build extract dataset from kaggle
-        kaggle.api.authenticate()
+        from kaggle.api.kaggle_api_extended import KaggleApi
+
+        #kaggle.api.authenticate()
 
         pass
 
