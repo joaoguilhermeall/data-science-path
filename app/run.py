@@ -9,7 +9,7 @@ def run_app(args: Namespace) -> int:
     config = None
 
     if args.kaggle:
-        config = ConfigKaggle()
+        config = ConfigKaggle(args.force)
     else:
         config = Config()
 

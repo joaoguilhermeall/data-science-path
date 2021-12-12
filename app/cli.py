@@ -22,7 +22,14 @@ def cli_constructor() -> argparse.Namespace:
     )
     parser.add_argument(
         "--kaggle",
-        help="Require Username and API Key of Kaggle from prompt",
+        help="Require Username and API Key of Kaggle if dataset was not downloaded yet",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "-f",
+        "--force",
+        help="Force Kaggle Request credentials and download dataset even if it already exists",
         action="store_true",
         default=False,
     )
