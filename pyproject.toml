@@ -12,6 +12,7 @@ kaggle = "^1.5.12"
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
+ipython = "^7.30.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
