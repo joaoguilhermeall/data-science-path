@@ -1,7 +1,10 @@
 # App folders
 .vscode/
-download/
-output/
+download/*
+output/*
+keys/*
+
+!.gitkeep
 
 # Remove poetry.lock
 poetry.lock
