@@ -1,6 +1,6 @@
 # App folders
 .vscode/
-download/*
+input/*
 output/*
 keys/*
 
