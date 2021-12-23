@@ -1,5 +1,4 @@
 import logging
-from re import VERBOSE
 
 VERBOSE = 25
 
