@@ -31,7 +31,7 @@ class ETL(ABC):
         else:
             raise (LevelETLException(f"ETL level is not valid: {name}"))
 
-    def _download_dataset(self, dataset: str, filename: str) -> Path:
+    def _download_dataset(self, dataset: str, filename: str) -> None:
         """Download dataset file from Kaggle"""
         # Import from method because KaggleApi is instantiated when It is called
         from kaggle.api.kaggle_api_extended import KaggleApi, ApiException
@@ -51,28 +51,27 @@ class ETL(ABC):
             raise (
                 KaggleTokenInvalid(f"{ex}: Please, try a new Kaggle API Token. Manages it on the kaggle website")
             )
-        
-        return self._configs.KAGGLE_DATASET_FILE
 
     def extract(self) -> None:
         """Extract and build information"""
+        dataset = self._configs.KAGGLE_DATASET
+        filename = self._configs.KAGGLE_DATASET_FILENAME
+        
         # If dataset file not exist or force download
         if not self._configs.KAGGLE_DATASET_FILE.exists():
-            verbose("File does not exist. Downloading")
-            file_path = self._download_dataset()
+            self._download_dataset(dataset, filename)
             
         elif self._configs.KAGGLE_DOWNLOAD_FORCE:
-            verbose("Force download!")
-            file_path = self._download_dataset()
+            self._download_dataset(dataset, filename)
+
         else:
             pass
-
-        file_key = file_path.name.rsplit(".")[0]
+        
+        file = self._configs.KAGGLE_DATASET_FILE
+        file_key = file.name.rsplit(".")[0]
 
         # If necessary, build another Dataframes here
-        self._dataframes[file_key] = read_csv(file_path)
-
-        verbose("Extraction finished!")
+        self._dataframes[file_key] = read_csv(file)
 
     def transform(self):
         # TODO: ETL TRANSFORM

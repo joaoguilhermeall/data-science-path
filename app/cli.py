@@ -43,11 +43,18 @@ class CLI:
         self._parser.parse_args()
 
     def _run_cli(self) -> None:
-        credentials = {}
+        if self.args.force:
+            self._configs.KAGGLE_DOWNLOAD_FORCE = True
 
-        credentials = self._get_kaggle_credentials()
+        if (
+            not self.configs.KAGGLE_DATASET_FILE.exists()
+            or self.args.force
+        ):
+            credentials = {}
 
-        self._export_kaggle_credentials(credentials)
+            credentials = self._get_kaggle_credentials()
+
+            self._export_kaggle_credentials(credentials)
 
     @property
     def args(self) -> argparse.Namespace:
@@ -72,7 +79,7 @@ class CLI:
         try:
             credentials["KAGGLE_USERNAME"] = environ["KAGGLE_USERNAME"]
             credentials["KAGGLE_KEY"] = environ["KAGGLE_KEY"]
-        
+
         except KeyError as ke:
             msg = " ".join(
                 [
@@ -107,7 +114,7 @@ class CLI:
                     ]
                 )
                 print(KaggleKeysFile(msg))
-        
+
         return credentials
 
     def _get_kaggle_credentials(self) -> Dict[str, str]:
@@ -120,7 +127,7 @@ class CLI:
             credentials = self._request_kaggle_credentials()
 
         return credentials
-    
+
     def _request_kaggle_credentials(self) -> Dict[str, str]:
         """Request KAGGLE credentials"""
 
@@ -128,11 +135,13 @@ class CLI:
         print("Credentials are being requested because the", end=" ")
         print("configuration file was not found and the variables", end=" ")
         print("were not found in the environment", end="\n\n")
-        
+
         credentials = {}
 
         credentials["KAGGLE_USERNAME"] = input("Enter Kaggle API Username: ")
         credentials["KAGGLE_KEY"] = getpass("Enter Kaggle API Key: ")
+
+        print()
 
         return credentials
 
