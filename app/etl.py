@@ -34,7 +34,7 @@ class ETL(ABC):
         else:
             raise (ActionETLException(f"Action for ETL is not valid: {name}"))
 
-    def _download_dataset(self, dataset: str, file_name: str) -> Path:
+    def _download_dataset(self, dataset: str, filename: str) -> Path:
         """Download dataset file from Kaggle"""
         # Import from method because KaggleApi is instantiated when It is called
         from kaggle.api.kaggle_api_extended import KaggleApi, ApiException
@@ -45,8 +45,8 @@ class ETL(ABC):
         try:
             kaggle_api.dataset_download_file(
                 dataset=dataset,
-                file_name=file_name,
-                path=self._configs.DOWNLOAD,
+                file_name=filename,
+                path=self._configs.INPUT,
                 force=True,
                 quiet=False
             )
@@ -55,17 +55,26 @@ class ETL(ABC):
                 KaggleException(f"{ex}: Please, try a new Kaggle API Token. Manages it on the kaggle website")
             )
         
-        return self._configs.DOWNLOAD / file_name
+        return self._configs.KAGGLE_DATASET_FILE
 
     def extract(self) -> None:
         """Extract and build information"""
-        if (not os.path.exists(self._configs.DOWNLOAD / self._configs.KAGGLE_DATASET_FILENAME)
-            or self._configs.REQUEST_KAGGLE_FORCE
-        ):
-            file_path = self._download_dataset()
-            file_key = file_path.name.rsplit(".")[0]
+        dataset = self._configs.KAGGLE_DATASET
+        filename = self._configs.KAGGLE_DATASET_FILENAME
+        file_key = filename.name.rsplit(".")[0]
 
-            self._dataframes[file_key] = read_csv(file_path)
+        # If dataset file not exist or force download
+        if not self._configs.KAGGLE_DATASET_FILE.exists():
+            verbose("File does not exist. Downloading")
+            file_path = self._download_dataset(dataset, filename)
+            
+        elif self._configs.KAGGLE_DOWNLOAD_FORCE:
+            verbose("Force download!")
+            file_path = self._download_dataset(dataset, filename)
+        else:
+            pass
+
+        self._dataframes[file_key] = read_csv(file_path)
 
     def transform(self):
         pass

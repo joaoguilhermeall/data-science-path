@@ -9,7 +9,7 @@ def verbose(msg: str) -> None:
     Args:
         msg (str): Message to show on verbose
     """
-    logging.log(msg, VERBOSE)
+    logging.log(VERBOSE, msg)
 
 
 class Logger:
