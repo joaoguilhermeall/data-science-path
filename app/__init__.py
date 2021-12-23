@@ -1,17 +1,17 @@
-from abc import ABC
-
 from app.cli import CLI
 from app.etl import ETL
 from app.config import AppConfig
 
 
-class App(ABC):
+class App(object):
+    """App abstracion class"""
+    
     def __init__(self) -> None:
         configs = AppConfig()
 
-        self.cli(CLI(configs))
-        self.etl(ETL(configs))
-        self.configs(configs)
+        self.cli = CLI(configs)
+        self.etl = ETL(configs)
+        self.configs = configs
 
     @property
     def configs(self) -> AppConfig:
