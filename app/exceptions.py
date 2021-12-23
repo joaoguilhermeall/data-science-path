@@ -14,6 +14,10 @@ class KaggleKeysEnviron(_KaggleException):
     """Kaggle API keys not founded on environ app"""
     pass
 
+class KaggleTokenInvalid(_KaggleException):
+    """Kaggle Token Invalid"""
+    pass
+
 
 class _ETLExceptions(BaseException):
     """Base Exceptions of ETL execution"""
