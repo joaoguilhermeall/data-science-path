@@ -9,6 +9,7 @@ license = "MIT"
 python = "^3.8"
 pandas = "latest"
 kaggle = "^1.5.12"
+jupyter = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
