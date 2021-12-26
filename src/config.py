@@ -18,9 +18,7 @@ class _BaseConfig(ABC):
     KAGGLE_KEY = None
 
     KAGGLE_DATASET = "uciml/pima-indians-diabetes-database"
-    KAGGLE_DATASET_FILENAME = "diabetes.csv"
-
-    KAGGLE_DATASET_FILE = INPUT / KAGGLE_DATASET_FILENAME    
+    KAGGLE_DATASET_PATH = INPUT / "pima-indians-diabetes-database.zip"
 
     KAGGLE_URI = "https://www.kaggle.com/"
 

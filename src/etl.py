@@ -32,7 +32,7 @@ class ETL(ABC):
         else:
             raise (LevelETLException(f"ETL level is not valid: {name}"))
 
-    def _download_dataset(self, dataset: str, filename: str) -> None:
+    def _download_dataset(self, dataset: str, force: str = False) -> None:
         """Download dataset file from Kaggle"""
         # Import from method because KaggleApi is instantiated when It is called
         from kaggle.api.kaggle_api_extended import KaggleApi, ApiException
@@ -41,12 +41,12 @@ class ETL(ABC):
         kaggle_api.authenticate()
 
         try:
-            kaggle_api.dataset_download_file(
+            kaggle_api.dataset_download_files(
                 dataset=dataset,
-                file_name=filename,
-                path=self._configs.INPUT,
-                force=True,
-                quiet=False
+                path=self.input_fd,
+                force=force,
+                quiet=False,
+                unzip=False
             )
         except ApiException(401) as ex:
             raise (
@@ -56,23 +56,21 @@ class ETL(ABC):
     def extract(self) -> None:
         """Extract and build information"""
         dataset = self._configs.KAGGLE_DATASET
-        filename = self._configs.KAGGLE_DATASET_FILENAME
         
         # If dataset file not exist or force download
-        if not self._configs.KAGGLE_DATASET_FILE.exists():
-            self._download_dataset(dataset, filename)
+        if not self.dataset_path.exists():
+            self._download_dataset(dataset)
             
         elif self._configs.KAGGLE_DOWNLOAD_FORCE:
-            self._download_dataset(dataset, filename)
-
-        else:
-            pass
+            self._download_dataset(dataset, True)
         
-        file = self._configs.KAGGLE_DATASET_FILE
-        file_key = file.name.rsplit(".")[0]
-
         # If necessary, build another Dataframes here
-        self._dataframes[file_key] = read_csv(file)
+        with zipfile.ZipFile(self.dataset_path) as file_ziped:
+            for file in file_ziped.filelist:
+                if file.filename.endswith(".csv"):
+                    with file_ziped.open(file) as csv_ziped:
+                        # Add dataframe
+                        self._dataframes[csv_ziped.name] = read_csv(csv_ziped)
 
     def transform(self):
         # TODO: ETL TRANSFORM
@@ -91,3 +89,17 @@ class ETL(ABC):
     @property
     def dataframes(self) -> Union[DataFrame, None]:
         return self._dataframes
+
+    @property
+    def input_fd(self) -> Path:
+        """Input Folder"""
+        return self._configs.INPUT
+    
+    @property
+    def output_fd(self) -> Path:
+        """Output Folder"""
+        return self._configs.OUTPUT
+
+    @property
+    def dataset_path(self) -> Path:
+        return self._configs.KAGGLE_DATASET_PATH

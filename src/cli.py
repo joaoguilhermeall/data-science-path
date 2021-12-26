@@ -47,7 +47,7 @@ class CLI:
             self._configs.KAGGLE_DOWNLOAD_FORCE = True
 
         if (
-            not self.configs.KAGGLE_DATASET_FILE.exists()
+            not self.configs.KAGGLE_DATASET_PATH.exists()
             or self.args.force
         ):
             credentials = {}
