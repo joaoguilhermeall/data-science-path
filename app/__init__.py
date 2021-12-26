@@ -7,39 +7,31 @@ class App(object):
     """App abstracion class"""
     
     def __init__(self) -> None:
-        configs = AppConfig()
-
-        self.cli = CLI(configs)
-        self.etl = ETL(configs)
-        self.configs = configs
+        self._configs = AppConfig()
+        self._cli = None
+        self._etl = None
 
     @property
     def configs(self) -> AppConfig:
         return self._configs
     
-    @configs.setter
-    def configs(self, configs: AppConfig) -> None:
-        self._configs = configs
-    
     @property
     def cli(self) -> CLI:
-        return self._cli
+        if self._cli == None:
+            self._cli = CLI(self.configs)
 
-    @cli.setter
-    def cli(self, cli: CLI) -> None:
-        self._cli = cli
+        return self._cli
 
     @property
     def etl(self) -> ETL:
+        if self._etl == None:
+            self._etl = ETL(self.configs)
+        
         return self._etl
     
-    @etl.setter
-    def etl(self, etl: ETL) -> None:
-        self._etl = etl
-    
     def run(self):
-        """Run App"""
-        level = self._etl[self._cli.level]
+        """Run App - Callable only by terminal enviroment"""
+        level = self.etl[self.cli.level]
         level()
 
 
