@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Callable, Dict, Union
 
 from abc import ABC
 
@@ -19,7 +19,7 @@ class ETL(ABC):
         self._configs = configs if configs is not None else AppConfig()
         self._dataframes: Dict[str, DataFrame] = {}
 
-    def __getitem__(self, name: str) -> Any:
+    def __getitem__(self, name: str) -> Callable[[], None]:
         if name == "extract":
             return self.extract
         elif name == "transform":
