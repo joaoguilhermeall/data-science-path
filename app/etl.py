@@ -14,9 +14,9 @@ from app.exceptions import KaggleTokenInvalid, LevelETLException
 class ETL(ABC):
     """Base ETL class"""
 
-    def __init__(self, configs: AppConfig) -> None:
+    def __init__(self, configs: AppConfig = None) -> None:
         super().__init__()
-        self._configs = configs
+        self._configs = configs if configs is not None else AppConfig()
         self._dataframes: Dict[str, DataFrame] = {}
 
     def __getitem__(self, name: str) -> Any:

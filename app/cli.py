@@ -12,8 +12,8 @@ from app.exceptions import KaggleKeysEnviron, KaggleKeysFile
 
 
 class CLI:
-    def __init__(self, configs: AppConfig) -> None:
-        self._configs = configs
+    def __init__(self, configs: AppConfig = None) -> None:
+        self._configs = configs if configs is not None else AppConfig()
 
         self._build_cli()
         self._run_cli()
