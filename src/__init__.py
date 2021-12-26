@@ -1,6 +1,6 @@
-from app.cli import CLI
-from app.etl import ETL
-from app.config import AppConfig
+from src.cli import CLI
+from src.etl import ETL
+from src.config import AppConfig
 
 
 class App(object):

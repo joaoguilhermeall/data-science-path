@@ -3,11 +3,11 @@ from os import path
 from pathlib import Path
 from abc import ABC
 
-import app
+import src
 
 
 class _BaseConfig(ABC):
-    APP_PATH = Path(path.dirname(app.__file__))
+    APP_PATH = Path(path.dirname(src.__file__))
     OUTPUT = APP_PATH / "../output"
     INPUT = APP_PATH / "../input"
     KEYS = APP_PATH / "../keys"

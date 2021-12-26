@@ -7,8 +7,8 @@ from pathlib import Path
 from json import loads
 import argparse
 
-from app.config import AppConfig
-from app.exceptions import KaggleKeysEnviron, KaggleKeysFile
+from src.config import AppConfig
+from src.exceptions import KaggleKeysEnviron, KaggleKeysFile
 
 
 class CLI:
